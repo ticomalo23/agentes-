@@ -1,0 +1,50 @@
+// Swap provider to postgresql when moving to Supabase/Postgres
+// Run (local SQLite): npx prisma generate && npx prisma migrate dev --name init
+// Run (Supabase): set DATABASE_URL to the connection string, then npx prisma migrate deploy
+
+datasource db {
+  provider = "postgresql" // change to "sqlite" for local quick start
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Car {
+  id            Int      @id @default(autoincrement())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  make          String
+  model         String
+  year          Int
+  trim          String?
+  dailyPrice    Int
+  city          String
+  state         String
+  mileage       Int
+  transmission  String
+  fuel          String
+  seats         Int
+  doors         Int
+  imageUrl      String
+  images        String[]
+  description   String
+  features      String[]
+  available     Boolean  @default(true)
+  bookings      Booking[]
+}
+
+model Booking {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  carId      Int
+  car        Car      @relation(fields: [carId], references: [id])
+  name       String
+  email      String
+  phone      String?
+  startDate  DateTime
+  endDate    DateTime
+  message    String?
+  status     String   @default("pending") // pending | confirmed | canceled
+}
